@@ -38,16 +38,19 @@
       this.current = 'main';
       const camp = Store.getJSON('campaign', { unlocked: 0, done: {} });
       const hasAuto = !!Store.get('save_auto');
+      const I = WF.ICON;
+      const MB = (a, icon, title, sub) => `<button class="mbtn" data-a="${a}"><span class="mi">${I[icon]}</span><span class="mt">${title}${sub ? `<small>${sub}</small>` : ''}</span></button>`;
       const el = this.screen('menu-main', `
-        <div class="logo">Warfront<span>Dominion</span></div>
+        <div class="logowrap"><svg class="logomark" viewBox="0 0 64 64"><defs><linearGradient id="lg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe08a"/><stop offset="1" stop-color="#a87c1c"/></linearGradient></defs><path d="M32 3l25 9v19c0 15-10.5 24.5-25 30C17.5 55.5 7 46 7 31V12z" fill="#151c16" stroke="url(#lg1)" stroke-width="3"/><path d="M32 12l18 6.5v12.5c0 10.5-7.5 17-18 21-10.5-4-18-10.5-18-21V18.5z" fill="none" stroke="rgba(232,184,74,0.35)" stroke-width="1.5"/><path d="M20 38l12-16 12 16" fill="none" stroke="url(#lg1)" stroke-width="4" stroke-linejoin="round"/><path d="M24 45l8-10 8 10" fill="none" stroke="url(#lg1)" stroke-width="3" stroke-linejoin="round"/></svg>
+        <div class="logo"><div>Warfront<span>Dominion <i class="v2badge">v2</i></span></div></div></div>
         <div class="tag">Real-time strategy · Three factions · Fully offline</div>
-        ${hasAuto ? '<button class="mbtn" data-a="continue">Continue<small>Resume your last autosaved battle</small></button>' : ''}
-        <button class="mbtn" data-a="campaign">Campaign<small>Operation Iron Dawn — ${Object.keys(camp.done).length}/${WF.MISSIONS.length} missions</small></button>
-        <button class="mbtn" data-a="skirmish">Skirmish<small>Battle up to 3 AI commanders</small></button>
-        <button class="mbtn" data-a="sandbox">Sandbox<small>Experiment with every unit and system</small></button>
-        <button class="mbtn" data-a="load">Load Game</button>
-        <button class="mbtn" data-a="settings">Settings</button>
-        <button class="mbtn" data-a="help">Field Manual</button>
+        <div class="mgrid">${hasAuto ? MB('continue', 'play2', 'Continue', 'Resume your last autosaved battle') : ''}
+        ${MB('campaign', 'flag', 'Campaign', 'Operation Iron Dawn — ' + Object.keys(camp.done).length + '/' + WF.MISSIONS.length + ' missions')}
+        ${MB('skirmish', 'sword', 'Skirmish', 'Battle up to 3 AI commanders')}
+        ${MB('sandbox', 'sandbox', 'Sandbox', 'Experiment with every unit and system')}
+        ${MB('load', 'load', 'Load Game', '')}
+        ${MB('settings', 'settings', 'Settings', '')}
+        ${MB('help', 'book', 'Field Manual', '')}</div>
         <div class="ver">v${this.G.VERSION} · ${Store.native ? 'Android' : 'Web'} build</div>`);
       this.click(el, (a) => {
         if (a === 'continue') this.tryLoad('auto');
@@ -94,7 +97,7 @@
             </div>
             <div class="col">
               <div class="label">Your faction</div>
-              <div class="cards">${Object.keys(D.FACTIONS).map((f) => `<button class="card ${c.players[0].faction === f ? 'on' : ''}" data-a="myfac:${f}" title="${esc(D.FACTIONS[f].desc)}"><b style="color:var(--acc)">${esc(D.FACTIONS[f].name)}</b><span><i>${esc(D.FACTIONS[f].motto)}</i><br>${esc(D.FACTIONS[f].tagline)}</span></button>`).join('')}</div>
+              <div class="cards">${Object.keys(D.FACTIONS).map((f) => `<button class="card ${c.players[0].faction === f ? 'on' : ''}" data-a="myfac:${f}" title="${esc(D.FACTIONS[f].desc)}"><span class="emb">${WF.factionEmblem(f, 30)}</span><b style="color:var(--acc)">${esc(D.FACTIONS[f].name)}</b><span><i>${esc(D.FACTIONS[f].motto)}</i><br>${esc(D.FACTIONS[f].tagline)}</span></button>`).join('')}</div>
               <div class="label">Opponents & teams</div>
               ${c.players.slice(1).map((p, k) => { const i = k + 1; return `<div class="slot"><span class="sw" style="background:${D.TEAM_COLORS[p.color].main}"></span><b>${esc(p.name)}</b><div class="seg">${fac(p.faction, 'fac:' + i)}</div><div class="seg">${ai(p.ai || 'normal', i)}</div><div class="seg">${[0, 1, 2, 3].map((t) => `<button class="${p.team === t ? 'on' : ''}" data-a="team:${i}:${t}">T${t + 1}</button>`).join('')}</div>${i > 1 ? `<button class="btn danger" data-a="rem:${i}">✕</button>` : ''}</div>`; }).join('')}
               ${c.players.length < maxP ? '<button class="btn" data-a="add">+ Add opponent</button>' : ''}

@@ -18,8 +18,8 @@ ANDROID_JAR = os.environ.get("ANDROID_JAR", "/opt/sdk/ap/android-33/android.jar"
 DX_JAR = os.environ.get("DX_JAR", "/opt/sdk/dx.jar")
 
 PKG = "com.warfront.dominion"
-VERSION_CODE = 1
-VERSION_NAME = "1.0.0"
+VERSION_CODE = 2
+VERSION_NAME = "2.0.0"
 MIN_SDK = 24
 TARGET_SDK = 33
 APP_LABEL = "Warfront: Dominion"

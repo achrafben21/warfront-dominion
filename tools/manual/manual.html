@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>Warfront: Dominion — دليل القائد</title>
+<style>
+@font-face { font-family: 'Tajawal'; src: url('fonts/Tajawal-Regular.ttf'); font-weight: 400; }
+@font-face { font-family: 'Tajawal'; src: url('fonts/Tajawal-Medium.ttf'); font-weight: 500; }
+@font-face { font-family: 'Tajawal'; src: url('fonts/Tajawal-Bold.ttf'); font-weight: 700; }
+@font-face { font-family: 'Tajawal'; src: url('fonts/Tajawal-ExtraBold.ttf'); font-weight: 800; }
+@font-face { font-family: 'Rajdhani'; src: url('../../game/fonts/Rajdhani-Bold.ttf'); font-weight: 700; }
+@font-face { font-family: 'Rajdhani'; src: url('../../game/fonts/Rajdhani-SemiBold.ttf'); font-weight: 600; }
+@font-face { font-family: 'BlackOps'; src: url('../../game/fonts/BlackOpsOne-Regular.ttf'); }
+@page { size: A4; margin: 0; }
+:root { --bg: #0d1210; --bg2: #141b17; --panel: #18211c; --line: #2c3a31; --gold: #e8b84a; --gold2: #ffd97a; --text: #e3ebe0; --dim: #9fb09b; --good: #5fdc7a; --bad: #ef5a4b; --blue: #6fb6ff; --cyan: #5ff3ff; --orange: #ffb347; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Tajawal', sans-serif; font-size: 11pt; line-height: 1.75; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.en { font-family: 'Rajdhani', sans-serif; font-weight: 700; direction: ltr; unicode-bidi: isolate; letter-spacing: 0.02em; }
+.page { width: 210mm; min-height: 297mm; padding: 16mm 15mm 18mm; position: relative; page-break-after: always; break-after: page; overflow: hidden;
+  background: radial-gradient(ellipse at 100% 0%, rgba(232,184,74,0.07), transparent 45%), linear-gradient(180deg, #101613, #0b0f0d); }
+.page::before { content: ''; position: absolute; inset: 7mm; border: 1px solid rgba(232,184,74,0.18); border-radius: 4mm; pointer-events: none; }
+.page::after { content: ''; position: absolute; top: 7mm; right: 7mm; width: 16mm; height: 16mm; border-top: 2px solid var(--gold); border-right: 2px solid var(--gold); border-radius: 0 4mm 0 0; pointer-events: none; }
+.pghead { display: flex; justify-content: space-between; align-items: center; color: var(--dim); font-size: 8.5pt; margin-bottom: 6mm; border-bottom: 1px solid var(--line); padding-bottom: 2mm; }
+.pghead .en { color: var(--gold); letter-spacing: 0.25em; font-size: 9pt; }
+h1 { font-weight: 800; font-size: 25pt; margin: 0 0 3mm; color: var(--gold2); line-height: 1.3; }
+h1 small { display: block; font-size: 11pt; color: var(--dim); font-weight: 500; }
+h2 { font-weight: 800; font-size: 16pt; color: var(--gold2); margin: 6mm 0 2mm; display: flex; align-items: center; gap: 3mm; }
+h2::before { content: ''; width: 3mm; height: 7mm; background: linear-gradient(var(--gold2), #9a7419); border-radius: 1mm; }
+h3 { font-weight: 700; font-size: 12.5pt; color: #f2e3b6; margin: 4mm 0 1mm; }
+p { margin: 1.5mm 0; }
+.lead { font-size: 12pt; color: #d6e0d2; }
+.box { background: linear-gradient(180deg, #1a241e, #131a16); border: 1px solid var(--line); border-radius: 3mm; padding: 3mm 4mm; margin: 3mm 0; position: relative; }
+.tip { border-right: 4px solid var(--gold); }
+.tip b.t { color: var(--gold2); }
+.warn { border-right: 4px solid var(--bad); }
+.note { border-right: 4px solid var(--blue); }
+ol, ul { margin: 1mm 0; padding-right: 6mm; }
+li { margin: 0.8mm 0; }
+table { width: 100%; border-collapse: collapse; margin: 2.5mm 0; font-size: 9.5pt; }
+th { background: #26332b; color: var(--gold2); font-weight: 700; padding: 1.8mm 2mm; text-align: right; border-bottom: 2px solid var(--gold); }
+td { padding: 1.5mm 2mm; border-bottom: 1px solid var(--line); vertical-align: middle; }
+tr:nth-child(even) td { background: rgba(255,255,255,0.025); }
+td.num, th.num { text-align: center; font-family: 'Rajdhani'; font-weight: 700; font-size: 10.5pt; direction: ltr; }
+.shot { width: 100%; border-radius: 3mm; border: 1px solid rgba(232,184,74,0.35); box-shadow: 0 3mm 8mm rgba(0,0,0,0.6); display: block; margin: 3mm 0; }
+.cap { font-size: 8.5pt; color: var(--dim); text-align: center; margin-top: -1mm; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3mm; }
+.kbd { display: inline-block; font-family: 'Rajdhani'; font-weight: 700; direction: ltr; background: #26332b; border: 1px solid #3c4c41; border-bottom-width: 2px; border-radius: 1.2mm; padding: 0 1.6mm; font-size: 9.5pt; color: #f2e3b6; }
+/* cover */
+.cover { padding: 0; display: flex; flex-direction: column; justify-content: flex-end; background: #070a09; }
+.cover img.bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: saturate(1.1) brightness(0.85); }
+.cover .shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5,8,7,0.2) 0%, rgba(5,8,7,0.35) 40%, rgba(5,8,7,0.96) 78%); }
+.cover .content { position: relative; padding: 0 16mm 22mm; }
+.cover .logo { font-family: 'BlackOps'; font-size: 52pt; line-height: 1; color: #f4f7f2; direction: ltr; text-align: left; text-shadow: 0 3px 0 #000, 0 0 24px rgba(232,184,74,0.35); }
+.cover .logo span { display: block; font-family: 'Rajdhani'; font-weight: 700; font-size: 17pt; letter-spacing: 0.9em; color: var(--gold); margin-top: 2mm; }
+.cover .title { font-size: 26pt; font-weight: 800; color: var(--gold2); margin-top: 8mm; }
+.cover .sub { font-size: 12pt; color: #cfd9cb; }
+.cover .badge { display: inline-block; background: linear-gradient(180deg, #f0c45a, #a87c1c); color: #1a1205; font-family: 'Rajdhani'; font-weight: 700; padding: 0.5mm 3mm; border-radius: 1mm; letter-spacing: 0.15em; margin-top: 3mm; direction: ltr; }
+.cover .emblems { display: flex; gap: 5mm; margin-top: 7mm; align-items: center; }
+.cover .emblems div { display: flex; align-items: center; gap: 2mm; color: var(--dim); font-size: 9pt; }
+/* toc */
+.toc a { display: flex; justify-content: space-between; color: var(--text); text-decoration: none; padding: 1.6mm 0; border-bottom: 1px dashed var(--line); font-size: 11.5pt; }
+.toc a span.n { font-family: 'Rajdhani'; color: var(--gold); font-weight: 700; direction: ltr; }
+/* unit cards */
+.ucards { display: grid; grid-template-columns: 1fr 1fr; gap: 2.6mm; }
+.uc { display: flex; gap: 3mm; background: linear-gradient(180deg, #1a241e, #121915); border: 1px solid var(--line); border-radius: 2.5mm; padding: 2.2mm; break-inside: avoid; }
+.uc img { width: 19mm; height: 19mm; border-radius: 2mm; border: 1px solid rgba(232,184,74,0.4); flex: none; }
+.uc .nm { font-family: 'Rajdhani'; font-weight: 700; font-size: 11pt; color: var(--gold2); direction: ltr; text-align: right; line-height: 1.15; }
+.uc .ar { font-size: 8.6pt; color: #cfd9cb; line-height: 1.45; margin: 0.6mm 0; }
+.uc .st { display: flex; flex-wrap: wrap; gap: 1mm; }
+.uc .st span { font-family: 'Rajdhani'; font-weight: 700; font-size: 8.3pt; background: rgba(255,255,255,0.06); border-radius: 1mm; padding: 0 1.4mm; direction: ltr; color: #e8efe4; }
+.uc .st span i { font-style: normal; color: var(--dim); font-weight: 600; margin-left: 0.6mm; }
+.tag { display: inline-block; font-size: 7.6pt; padding: 0 1.6mm; border-radius: 1mm; margin-left: 1mm; font-weight: 700; }
+.tag.inf { background: #3b5133; } .tag.veh { background: #4a4430; } .tag.air { background: #2b4258; } .tag.naval { background: #233f4e; } .tag.exp { background: #6b2d24; }
+.fhead { display: flex; align-items: center; gap: 4mm; background: linear-gradient(90deg, rgba(232,184,74,0.12), transparent); border-radius: 3mm; padding: 2mm 3mm; margin: 2mm 0 3mm; }
+.fhead h2 { margin: 0; }
+.fhead h2::before { display: none; }
+.mult td { text-align: center; font-family: 'Rajdhani'; font-weight: 700; direction: ltr; }
+.bcards { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5mm; }
+.mapcard { display: flex; gap: 4mm; align-items: flex-start; margin-bottom: 4mm; break-inside: avoid; }
+.mapcard img { width: 58mm; border-radius: 2mm; border: 1px solid rgba(232,184,74,0.35); flex: none; }
+.mission { display: flex; gap: 3mm; margin: 2.5mm 0; break-inside: avoid; }
+.mission .n { font-family: 'BlackOps'; font-size: 20pt; color: var(--gold); width: 12mm; text-align: center; line-height: 1; flex: none; }
+.callout { position: absolute; width: 7mm; height: 7mm; border-radius: 50%; background: var(--gold); color: #1a1205; font-family: 'Rajdhani'; font-weight: 700; font-size: 11pt; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 0 1.2mm rgba(0,0,0,0.6); direction: ltr; }
+.shotwrap { position: relative; }
+.legend { display: grid; grid-template-columns: 1fr 1fr; gap: 1mm 5mm; font-size: 9.6pt; }
+.legend div b { display: inline-flex; width: 5.5mm; height: 5.5mm; border-radius: 50%; background: var(--gold); color: #1a1205; font-family: 'Rajdhani'; align-items: center; justify-content: center; margin-left: 1.5mm; font-size: 9pt; }
+.foot { position: absolute; bottom: 9mm; left: 15mm; right: 15mm; display: flex; justify-content: space-between; font-size: 8pt; color: #6d7d6a; }
+.foot .en { color: #8b9a86; letter-spacing: 0.2em; }
+</style>
+</head>
+<body>
+<div id="doc"></div>
+<script src="../../game/js/util.js"></script>
+<script src="../../game/js/data.js"></script>
+<script src="../../game/js/map.js"></script>
+<script src="../../game/js/art.js"></script>
+<script src="../../game/js/art_units.js"></script>
+<script src="../../game/js/art_bld.js"></script>
+<script src="../../game/js/art_terrain.js"></script>
+<script src="../../game/js/icons.js"></script>
+<script src="../../game/js/campaign.js"></script>
+<script src="manual.js"></script>
+</body>
+</html>

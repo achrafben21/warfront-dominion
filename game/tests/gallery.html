@@ -1,17 +1,17 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"><style>body{background:#2c3a2a;margin:0;color:#ddd;font:11px sans-serif}canvas{display:block}</style></head><body>
 <canvas id="c" width="1700" height="1100"></canvas>
-<script src="../js/util.js"></script><script src="../js/data.js"></script><script src="../js/art.js"></script>
+<script src="../js/util.js"></script><script src="../js/data.js"></script><script src="../js/art.js"></script><script src="../js/art_units.js"></script><script src="../js/art_bld.js"></script><script src="../js/art_terrain.js"></script><script src="../js/icons.js"></script>
 <script>
 const g=document.getElementById('c').getContext('2d'); const D=WF.D, ART=WF.ART;
 g.fillStyle='#4e6838'; g.fillRect(0,0,1700,1100);
-let y=10; const S=2.2;
+let y=10; const S=3.0;
 for (const [fi,f] of Object.keys(D.FACTIONS).entries()) {
   let x=10; g.fillStyle='#fff'; g.fillText(D.FACTIONS[f].name,x,y+10); y+=16;
   for (const t of D.FACTIONS[f].units) {
     const d=D.UNITS[t]; const body=ART.unitBody(t,f,fi,d.radius); const tur=ART.unitTurret(t,f,fi,d.radius);
     g.save(); g.translate(x+40,y+40); g.scale(S,S); g.rotate(-0.5);
     g.drawImage(body.img,-body.w/2,-body.h/2,body.w,body.h); if(tur) g.drawImage(tur.img,-tur.w/2,-tur.h/2,tur.w,tur.h); g.restore();
-    g.fillStyle='#fff'; g.fillText(t,x+4,y+92); x+=84; if(x>1600){x=10;y+=100;}
+    g.fillStyle='#fff'; g.fillText(t,x+4,y+92); x+=100; if(x>1580){x=10;y+=118;}
   }
   y+=100;
 }

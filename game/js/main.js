@@ -2,7 +2,7 @@
 (function (WF) {
   'use strict';
   const U = WF.U, D = WF.D, TILE = U.TILE, Store = WF.Store;
-  const VERSION = '1.0.0';
+  const VERSION = '2.0.0';
 
   const G = {
     VERSION, settings: Store.loadSettings(), world: null, renderer: null, audio: null, hud: null, input: null, pid: 0,

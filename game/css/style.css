@@ -171,3 +171,126 @@ input[type=range] { width: 200px; accent-color: var(--acc); }
   .mbtn { padding: 8px 14px; margin: 4px 0; }
 }
 @media (max-height: 340px) { :root { --s: 0.8; } }
+
+/* =====================================================================
+   v2 THEME — military tactical interface
+   ===================================================================== */
+@font-face { font-family: 'Rajdhani'; src: url('../fonts/Rajdhani-Medium.ttf') format('truetype'); font-weight: 500; font-display: block; }
+@font-face { font-family: 'Rajdhani'; src: url('../fonts/Rajdhani-SemiBold.ttf') format('truetype'); font-weight: 600; font-display: block; }
+@font-face { font-family: 'Rajdhani'; src: url('../fonts/Rajdhani-Bold.ttf') format('truetype'); font-weight: 700 900; font-display: block; }
+@font-face { font-family: 'BlackOps'; src: url('../fonts/BlackOpsOne-Regular.ttf') format('truetype'); font-display: block; }
+:root {
+  --panel: linear-gradient(180deg, rgba(26, 34, 30, 0.93), rgba(12, 17, 15, 0.93));
+  --panel-flat: rgba(16, 22, 19, 0.92);
+  --edge: rgba(190, 210, 170, 0.22); --edge2: rgba(232, 184, 74, 0.55);
+  --glow: 0 0 0 1px rgba(0,0,0,0.6), 0 6px 18px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.07);
+}
+html, body { font-family: 'Rajdhani', "Segoe UI", Roboto, Arial, sans-serif; font-size: calc(15px * var(--s)); font-weight: 600; letter-spacing: 0.01em; }
+.ico svg, .ri svg, .side-btn svg, .tb-btn svg { width: 1.25em; height: 1.25em; display: block; }
+.ico { display: flex; font-style: normal; }
+.ri { display: flex; } .ri svg { width: 1.15em; height: 1.15em; }
+
+/* panels with tactical corner brackets */
+#selinfo, #drawer, #objectives, .dialog, .brief, .card, .mission, .slot, #placebar, #targetbar, .toast, #minimap-wrap {
+  background: var(--panel); border: 1px solid var(--edge); box-shadow: var(--glow);
+}
+#selinfo, .dialog, .brief, .card, .mission, .slot, .toast { position: relative; }
+#selinfo::before, #drawer::before, .dialog::before, .brief::before, #objectives::before {
+  content: ''; position: absolute; left: -1px; top: -1px; width: 12px; height: 12px; border-left: 2px solid var(--acc); border-top: 2px solid var(--acc); border-radius: 3px 0 0 0; pointer-events: none;
+}
+#selinfo::after, #drawer::after, .dialog::after, .brief::after, #objectives::after {
+  content: ''; position: absolute; right: -1px; bottom: -1px; width: 12px; height: 12px; border-right: 2px solid var(--acc); border-bottom: 2px solid var(--acc); border-radius: 0 0 3px 0; pointer-events: none;
+}
+
+/* top bar */
+#topbar { background: linear-gradient(180deg, rgba(14, 20, 17, 0.97), rgba(8, 12, 10, 0.85)); border-bottom: 1px solid rgba(232, 184, 74, 0.28); box-shadow: 0 2px 12px rgba(0,0,0,0.5); }
+#topbar::after { content: ''; position: absolute; left: 0; right: 0; bottom: -3px; height: 2px; background: linear-gradient(90deg, transparent, rgba(232,184,74,0.45), transparent); }
+.res { background: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.15)); border: 1px solid rgba(255,255,255,0.08); font-size: 1.08em; font-weight: 700; padding: 0 9px; }
+.res em { font-weight: 600; }
+.tb-btn, .side-btn, .grp, .cmd, .pb, .btn, .seg button, .mbtn {
+  background: linear-gradient(180deg, #2a352f 0%, #1a221e 55%, #141a17 100%); border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), inset 0 -1px 0 rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.35); color: #e2ebdf;
+}
+.tb-btn { display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.side-btn { display: flex; align-items: center; justify-content: center; color: #cfdccb; }
+.side-btn.on, .cmd.on, .cmd:active, .seg button.on { background: linear-gradient(180deg, #4d5f2e, #2d3a1a); border-color: var(--acc); color: #ffe7a6; box-shadow: inset 0 0 12px rgba(232,184,74,0.25), 0 0 10px rgba(232,184,74,0.25); }
+.grp { font-family: 'Rajdhani'; font-weight: 700; font-size: 1.05em; }
+.grp.has { border-color: rgba(111,182,255,0.6); color: #cfe4ff; box-shadow: inset 0 0 10px rgba(111,182,255,0.15); }
+
+/* command buttons */
+.cmd { width: calc(52px * var(--s)); height: calc(50px * var(--s)); border-radius: 9px; font-size: 1.05em; gap: 2px; }
+.cmd small { font-size: 0.62em; font-weight: 700; color: #a9b8a6; letter-spacing: 0.06em; margin-top: 2px; }
+.cmd.danger { border-color: rgba(239,90,75,0.55); color: #ffb9ad; }
+.cmd .ico { color: #f0e2b6; }
+
+/* selection panel */
+#selinfo { padding: 7px 9px; min-width: calc(190px * var(--s)); max-width: calc(250px * var(--s)); }
+.selrow { display: flex; gap: 8px; align-items: center; }
+.portrait { width: calc(48px * var(--s)); height: calc(48px * var(--s)); border-radius: 7px; border: 1px solid rgba(232,184,74,0.45); box-shadow: 0 0 10px rgba(0,0,0,0.6); flex: none; }
+.selmain { flex: 1; min-width: 0; }
+#selinfo .nm { font-family: 'Rajdhani'; font-size: 1.15em; letter-spacing: 0.02em; color: #ffd97a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#selinfo .hp { height: 7px; border-radius: 2px; background: #1a1a1a; box-shadow: inset 0 1px 2px rgba(0,0,0,0.8); }
+#selinfo .hp b { background: linear-gradient(180deg, #8ff0a0, #36b356); }
+.hpn { font-size: 0.78em; color: #a9b8a6; margin-top: 1px; font-variant-numeric: tabular-nums; }
+#selinfo .sub { font-size: 0.82em; color: #a3b3a0; font-weight: 500; }
+
+/* drawer */
+#drawer { border-radius: 12px; }
+#drawer-tabs { background: rgba(0,0,0,0.25); }
+#drawer-tabs button { font-family: 'Rajdhani'; font-weight: 700; font-size: 0.92em; letter-spacing: 0.1em; padding: 9px 2px; }
+#drawer-tabs button.on { color: #ffd97a; box-shadow: inset 0 -3px 0 var(--acc); background: linear-gradient(180deg, transparent, rgba(232,184,74,0.12)); }
+.item { border-radius: 9px; border: 1px solid rgba(255,255,255,0.12); box-shadow: inset 0 0 0 1px rgba(0,0,0,0.6), 0 2px 6px rgba(0,0,0,0.4); }
+.item .nm { font-size: 0.68em; font-weight: 700; padding: 3px 4px; background: linear-gradient(transparent, rgba(0,0,0,0.92) 45%); }
+.item .cost { font-size: 0.68em; background: rgba(0,0,0,0.55); padding: 1px 4px; border-radius: 4px; top: 3px; left: 3px; }
+.item.poor { box-shadow: inset 0 0 0 2px rgba(239,90,75,0.7); }
+.tech { background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(0,0,0,0.15)); }
+.tech b { font-size: 0.95em; color: #ffd97a; } .tech span { font-size: 0.78em; font-weight: 500; }
+.dhead { font-weight: 700; letter-spacing: 0.14em; color: #b7c4b3; border-bottom: 1px solid rgba(255,255,255,0.07); padding-bottom: 3px; }
+
+/* toasts & objectives */
+.toast { font-weight: 700; font-size: 0.92em; border-left-width: 4px; }
+#objectives h4 { font-family: 'Rajdhani'; font-size: 1.05em; letter-spacing: 0.12em; }
+#objectives { font-size: 0.85em; }
+#minimap-wrap { border: 1px solid rgba(232,184,74,0.45); border-radius: 8px; padding: 0; }
+
+/* menus */
+.menu-main { background: linear-gradient(90deg, rgba(3, 6, 5, 0.94) 0%, rgba(3, 6, 5, 0.7) 42%, rgba(3, 6, 5, 0.05) 78%), radial-gradient(ellipse at 20% 50%, rgba(232,184,74,0.06), transparent 60%); }
+.logo { font-family: 'BlackOps', 'Rajdhani', sans-serif; font-weight: 400; font-size: calc(54px * var(--s)); letter-spacing: 0.04em; display: flex; align-items: center; gap: 14px;
+  background: linear-gradient(180deg, #ffffff 0%, #dfe5dc 45%, #8d9a8a 52%, #e7ede4 100%); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: none; filter: drop-shadow(0 3px 0 rgba(0,0,0,0.85)) drop-shadow(0 0 22px rgba(232,184,74,0.25)); }
+.logo span { font-family: 'Rajdhani'; font-weight: 700; color: var(--acc); -webkit-text-fill-color: var(--acc); letter-spacing: 0.75em; font-size: 0.36em; margin-top: 4px; }
+.logowrap { display: flex; align-items: center; gap: 16px; }
+.logomark { width: calc(78px * var(--s)); height: calc(78px * var(--s)); flex: none; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.7)) drop-shadow(0 0 18px rgba(232,184,74,0.3)); }
+.v2badge { display: inline-block; font-family: 'Rajdhani'; font-weight: 700; font-size: 0.75em; padding: 2px 8px; border-radius: 4px; background: linear-gradient(180deg, #e8b84a, #a87c1c); color: #1a1205; letter-spacing: 0.12em; margin-left: 6px; vertical-align: middle; }
+.tag { font-size: 1em; color: #a3b3a0; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
+.mbtn { display: flex; align-items: center; gap: 12px; width: calc(270px * var(--s)); padding: 10px 14px; border-radius: 6px; clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px)); font-family: 'Rajdhani'; font-size: 1.08em; letter-spacing: 0.14em; }
+.mbtn .mi { width: 1.5em; height: 1.5em; color: var(--acc); flex: none; display: flex; }
+.mbtn .mi svg { width: 100%; height: 100%; }
+.mbtn .mt { display: flex; flex-direction: column; }
+.mbtn small { font-size: 0.72em; letter-spacing: 0.04em; font-weight: 600; color: #93a38f; }
+.mbtn:hover, .mbtn:active { background: linear-gradient(90deg, rgba(120, 92, 26, 0.95), rgba(40, 34, 20, 0.8)); border-color: var(--acc); color: #fff3cc; }
+.page h2 { font-family: 'Rajdhani'; font-weight: 700; letter-spacing: 0.18em; font-size: 1.5em; color: #ffd97a; }
+.label { font-weight: 700; letter-spacing: 0.16em; color: #a3b3a0; font-size: 0.78em; }
+.card { border-radius: 10px; }
+.card b { font-size: 1.05em; }
+.card.on { border-color: var(--acc); box-shadow: 0 0 0 1px var(--acc) inset, 0 0 22px rgba(232, 184, 74, 0.2), var(--glow); background: linear-gradient(180deg, rgba(70, 58, 24, 0.9), rgba(20, 22, 16, 0.95)); }
+.card .emb { float: right; margin: -2px -2px 0 6px; }
+.btn.pri, .pb.ok { background: linear-gradient(180deg, #f0c45a, #b0841f 60%, #8a6512); color: #1a1205; border-color: #ffd97a; text-shadow: 0 1px 0 rgba(255,255,255,0.3); }
+.pb.no { background: linear-gradient(180deg, #7a3328, #4a1c16); }
+.big { font-family: 'BlackOps', 'Rajdhani', sans-serif; font-weight: 400; letter-spacing: 0.08em; font-size: calc(52px * var(--s)); }
+.mission .n { font-family: 'BlackOps'; font-weight: 400; }
+.loading { background: radial-gradient(ellipse at 50% 40%, #16201b, #050807 70%); }
+.loading .logo { font-size: calc(30px * var(--s)); }
+.loading .bar { height: 8px; border: 1px solid rgba(232,184,74,0.4); background: #0d1210; }
+.statgrid { font-weight: 600; }
+.dialog h3 { font-family: 'Rajdhani'; font-weight: 700; letter-spacing: 0.14em; color: #ffd97a; }
+.mgrid { display: grid; grid-template-columns: repeat(2, auto); gap: 8px 10px; justify-content: start; }
+.mgrid .mbtn { margin: 0; width: calc(250px * var(--s)); }
+.menu-main .tag { margin: 6px 0 14px; }
+@media (max-height: 460px) {
+  .logomark { width: 52px; height: 52px; }
+  .logo { font-size: 38px; }
+  .mgrid .mbtn { padding: 7px 12px; width: calc(232px * var(--s)); }
+  .mgrid .mbtn small { display: none; }
+  .menu-main .tag { margin: 2px 0 10px; font-size: 0.85em; }
+}
+.v2badge { -webkit-text-fill-color: #1a1205; color: #1a1205; }

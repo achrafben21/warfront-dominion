@@ -164,7 +164,9 @@
       if (!e.air) this.decal(e.x, e.y, r * 0.8);
     }
     explosion(x, y, r, big) {
+      this.fx.add({ k: 'light', x, y, vx: 0, vy: 0, t: 0, life: big ? 0.45 : 0.28, r: r * (big ? 5 : 3.5) });
       this.fx.add({ k: 'flash', x, y, vx: 0, vy: 0, t: 0, life: 0.12, r: r * 1.6 });
+      if (!this.settings.lowFx) for (let i = 0; i < (big ? 4 : 2); i++) { const a = Math.random() * 6.28, sp = 30 + Math.random() * 60; this.fx.add({ k: 'ember', x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 20, t: 0, life: 0.6 + Math.random() * 0.6, drag: 1.2 }); }
       this.fx.add({ k: 'fireball', x, y, vx: 0, vy: 0, t: 0, life: 0.45 + r * 0.004, r: r * 0.9 });
       const n = big ? 6 : 3;
       for (let i = 0; i < n; i++) { const a = Math.random() * 6.28, sp = 10 + Math.random() * r; this.fx.add({ k: 'smoke', x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, t: 0, life: 1.2 + Math.random() * 1.2, r: r * 0.45, g: 70, drag: 1.2 }); }
@@ -203,9 +205,9 @@
     chunk(cx, cy) {
       const k = cx + ',' + cy; let c = this.chunks.get(k);
       if (!c) {
-        c = ART.terrainChunk(this.w.map, this.base, cx, cy, CH, this.w.map.deposits);
+        c = ART.terrainChunk(this.w.map, this.base, cx, cy, CH, this.w.map.deposits); this._built = true;
         this.chunks.set(k, c); this.chunkOrder.push(k);
-        const maxC = this.settings.quality === 'low' ? 16 : 30;
+        const maxC = this.settings.quality === 'low' ? 18 : this.settings.quality === 'high' ? 49 : 36;
         while (this.chunkOrder.length > maxC) { const old = this.chunkOrder.shift(); this.chunks.delete(old); }
       }
       return c;
@@ -213,7 +215,7 @@
     prewarm(n) { // build a few chunks per frame around camera to avoid hitches
       const m = this.w.map; let built = 0;
       const ccx = Math.floor(this.cam.x / (CH * TILE)), ccy = Math.floor(this.cam.y / (CH * TILE));
-      for (let r = 0; r < 3 && built < n; r++) for (let dy = -r; dy <= r && built < n; dy++) for (let dx = -r; dx <= r && built < n; dx++) {
+      for (let r = 0; r < (this.settings.quality === 'low' ? 2 : 3) && built < n; r++) for (let dy = -r; dy <= r && built < n; dy++) for (let dx = -r; dx <= r && built < n; dx++) {
         const cx = ccx + dx, cy = ccy + dy; if (cx < 0 || cy < 0 || cx * CH >= m.w || cy * CH >= m.h) continue;
         if (!this.chunks.has(cx + ',' + cy)) { this.chunk(cx, cy); built++; }
       }
@@ -221,7 +223,7 @@
 
     // ------------------------------------------------------------ main draw
     draw(alpha, dt, ui) {
-      this.time += dt;
+      this.time += dt; this.frameDt = dt;
       const g = this.g, w = this.w, c = this.cam;
       this.fx.update(dt);
       if (this.fogDirty !== w.tick && w.tick % 5 === 0) { this.updateFog(); this.fogDirty = w.tick; }
@@ -239,6 +241,8 @@
       for (let cy = Math.max(0, Math.floor(vy0 / CP)); cy <= Math.min(Math.ceil(m.h / CH) - 1, Math.floor(vy1 / CP)); cy++)
         for (let cx = Math.max(0, Math.floor(vx0 / CP)); cx <= Math.min(Math.ceil(m.w / CH) - 1, Math.floor(vx1 / CP)); cx++)
           g.drawImage(this.chunk(cx, cy), cx * CP, cy * CP, CP + 0.5, CP + 0.5);
+      // build one off-screen neighbour chunk in idle frames so panning never hitches
+      this._fn = (this._fn || 0) + 1; if (!this._built && this._fn % 8 === 0) this.prewarm(1); this._built = false;
       // animated water glints
       if (!this.settings.lowFx) this.drawWater(g);
       // decals
@@ -255,7 +259,7 @@
         if (e && !e.dead && w.visibleTo(e, this.team)) continue;
         if (!inView(gh.x, gh.y, 100)) continue;
         const pl = w.players[gh.owner]; const s = gh.built ? ART.bld(gh.type, pl.faction, pl.color) : ART.scaffold(gh.w * 32, gh.h * 32);
-        g.globalAlpha = 0.55; g.drawImage(s.img, gh.tx * TILE, gh.ty * TILE, s.w, s.h); g.globalAlpha = 1;
+        g.globalAlpha = 0.55; g.drawImage(s.img, gh.tx * TILE - (s.pad || 0), gh.ty * TILE - (s.pad || 0), s.w, s.h); g.globalAlpha = 1;
       }
       // entities
       const team = this.team; const sel = ui ? ui.selSet : null;
@@ -276,6 +280,9 @@
       // fog overlay
       g.imageSmoothingEnabled = true;
       if (!this.revealAll) g.drawImage(this.fogCv, 0, 0, m.w, m.h, 0, 0, m.pw, m.ph);
+      if (!this.settings.lowFx) { // atmospheric color grade + vignette (screen space)
+        g.save(); g.setTransform(this.dpr, 0, 0, this.dpr, 0, 0); g.drawImage(this.vignette(), 0, 0, this.sw, this.sh); g.restore();
+      }
       // radar blips (enemy units seen only by radar)
       for (const e of w.ents) {
         if (e.dead || e.kind !== 'unit' || !(e.radarVis & (1 << team)) || (e.vis & (1 << team))) continue;
@@ -297,16 +304,25 @@
       g.setTransform(1, 0, 0, 1, 0, 0);
     }
 
+    vignette() {
+      if (this._vig && this._vig.w === this.sw && this._vig.h === this.sh) return this._vig.c;
+      const c = ART.mk(Math.max(2, Math.round(this.sw / 2)), Math.max(2, Math.round(this.sh / 2))); const g = c.getContext('2d'); const W = c.width, H = c.height;
+      const gr = g.createRadialGradient(W / 2, H * 0.45, Math.min(W, H) * 0.35, W / 2, H / 2, Math.max(W, H) * 0.72);
+      gr.addColorStop(0, 'rgba(0,0,0,0)'); gr.addColorStop(1, 'rgba(4,8,6,0.42)'); g.fillStyle = gr; g.fillRect(0, 0, W, H);
+      const top = g.createLinearGradient(0, 0, 0, H); top.addColorStop(0, 'rgba(255,220,160,0.05)'); top.addColorStop(1, 'rgba(20,40,60,0.06)'); g.fillStyle = top; g.fillRect(0, 0, W, H);
+      this._vig = { w: this.sw, h: this.sh, c }; return c;
+    }
+
     drawWater(g) {
       // sparse moving glints over visible water tiles
       const m = this.w.map; const v = this.view; const t = this.time;
       const tx0 = Math.max(0, (v.x0 / TILE) | 0), tx1 = Math.min(m.w - 1, (v.x1 / TILE) | 0), ty0 = Math.max(0, (v.y0 / TILE) | 0), ty1 = Math.min(m.h - 1, (v.y1 / TILE) | 0);
       if ((tx1 - tx0) * (ty1 - ty0) > 9000) return;
-      g.fillStyle = 'rgba(220,240,255,0.16)';
+      g.strokeStyle = 'rgba(225,242,255,0.35)'; g.lineWidth = 1.1;
       for (let ty = ty0; ty <= ty1; ty++) for (let tx = tx0; tx <= tx1; tx++) {
         const i = ty * m.w + tx; const tt = m.t[i]; if (tt !== 4 && tt !== 8) continue;
         const ph = (m.deco[i] / 255) * 6.28; const s = Math.sin(t * 1.3 + ph);
-        if (s > 0.6) { const x = tx * 32 + 6 + (m.deco[i] % 18), y = ty * 32 + 8 + ((m.deco[i] >> 3) % 16); g.fillRect(x + s * 3, y, 7 * (s - 0.5), 1.4); }
+        if (s > 0.45) { const x = tx * 32 + 6 + (m.deco[i] % 18), y = ty * 32 + 8 + ((m.deco[i] >> 3) % 16); g.globalAlpha = (s - 0.45) * 1.6; g.beginPath(); g.moveTo(x + s * 4, y); g.quadraticCurveTo(x + s * 4 + 5, y - 2, x + s * 4 + 10, y); g.stroke(); g.globalAlpha = 1; }
       }
     }
 
@@ -323,13 +339,19 @@
       if (!e.built) {
         // construction: frame + partially revealed structure
         const s = ART.bld(e.type, pl.faction, pl.color);
-        g.save(); g.beginPath(); g.rect(x, y + H * (1 - e.progress), W, H * e.progress); g.clip(); g.globalAlpha = 0.85; g.drawImage(s.img, x, y, W, H); g.restore();
+        g.save(); g.beginPath(); g.rect(x - 8, y + H * (1 - e.progress), W + 16, H * e.progress + 8); g.clip(); g.globalAlpha = 0.9; g.drawImage(s.img, x - s.pad, y - s.pad, s.w, s.h); g.restore();
         const sc = ART.scaffold(W, H); g.globalAlpha = 0.75 * (1 - e.progress * 0.6); g.drawImage(sc.img, x, y, W, H); g.globalAlpha = 1;
         return;
       }
       const s = ART.bld(e.type, pl.faction, pl.color);
-      g.drawImage(s.img, x, y, W, H);
+      g.drawImage(s.img, x - s.pad, y - s.pad, s.w, s.h);
       const d = D.BUILDINGS[e.type];
+      // blinking lights & smoke stacks
+      const fxa = ART.bldFx[e.type];
+      if (fxa) {
+        if (fxa.lights) for (let li = 0; li < fxa.lights.length; li++) { const [fx, fy, col] = fxa.lights[li]; const on = Math.sin(this.time * 3 + e.id + li * 2) > 0.2; if (on && !pl.lowPower) blit(g, flashSprite(col.replace(/rgba\((\d+),(\d+),(\d+).*/, '$1,$2,$3')), x + fx * W, y + fy * H, 5, 0.9); }
+        if (fxa.smoke && !this.settings.lowFx && (e.queue.length || e.type === 'power') && Math.random() < 0.12) for (const [fx, fy] of fxa.smoke) this.fx.add({ k: 'smoke', x: x + fx * W, y: y + fy * H, vx: 5 + Math.random() * 4, vy: -8 - Math.random() * 6, t: 0, life: 2.2 + Math.random(), r: 3.5, g: e.type === 'power' ? 200 : 120, drag: 0.2 });
+      }
       // animated parts
       const t = this.time;
       if (e.type === 'radar' && !pl.lowPower) { const tu = ART.bldTurret('radar', pl.faction, pl.color, 18); this.drawRot(g, tu, e.x, e.y, t * 1.6); }
@@ -361,11 +383,13 @@
       if (air) { g.save(); g.translate(x + alt * 0.5, y + alt * 0.7); g.rotate(e.angle); g.drawImage(sh.img, -sh.w / 2, -sh.h / 2, sh.w, sh.h); g.restore(); }
       else if (e.cls !== 'naval') { g.save(); g.translate(x + 1.5, y + 2.5); g.rotate(e.angle); g.drawImage(sh.img, -sh.w / 2, -sh.h / 2, sh.w, sh.h); g.restore(); }
       // naval wake
-      if (e.cls === 'naval' && (e.vx || e.vy) && !this.settings.lowFx && Math.random() < 0.3) this.fx.add({ k: 'wake', x: x - Math.cos(e.angle) * R, y: y - Math.sin(e.angle) * R, vx: 0, vy: 0, t: 0, life: 1.4, r: R * 0.5 });
+      if (e.cls === 'naval' && (e.vx * e.vx + e.vy * e.vy) > 100 && !this.settings.lowFx && Math.random() < 0.5) { const bx = x - Math.cos(e.angle) * R * 0.9, by = y - Math.sin(e.angle) * R * 0.9; const px = -Math.sin(e.angle), py = Math.cos(e.angle); const sd = Math.random() < 0.5 ? -1 : 1; this.fx.add({ k: 'wake', x: bx, y: by, vx: px * sd * 10 - e.vx * 0.15, vy: py * sd * 10 - e.vy * 0.15, t: 0, life: 1.6, r: R * 0.45 }); }
       // dust from moving ground vehicles
       if (e.cls === 'veh' && e.mv === 'ground' && (e.vx * e.vx + e.vy * e.vy) > 400 && !this.settings.lowFx && Math.random() < 0.08) this.fx.add({ k: 'dust', x: x - Math.cos(e.angle) * R, y: y - Math.sin(e.angle) * R, vx: 0, vy: 0, t: 0, life: 0.8, r: R * 0.4 });
       if (e.mv === 'hover' && (e.vx || e.vy) && Math.random() < 0.1) this.fx.add({ k: 'dust', x: x - Math.cos(e.angle) * R, y: y - Math.sin(e.angle) * R, vx: 0, vy: 0, t: 0, life: 0.6, r: R * 0.5 });
-      const body = ART.unitBody(e.type, pl.faction, pl.color, R);
+      let frame = 0;
+      if (ART.tracked(e.type)) { const sp = Math.sqrt(e.vx * e.vx + e.vy * e.vy); e.trk = ((e.trk || 0) + sp * (this.frameDt || 0.016) * 0.35) % 3; frame = e.trk | 0; }
+      const body = ART.unitBody(e.type, pl.faction, pl.color, R, frame);
       g.save(); g.translate(x, y + bob - (air ? 0 : 0)); g.rotate(e.angle);
       if (air) { const sc = 1 + alt / 260; g.scale(sc, sc); }
       // colossus walk wobble
@@ -501,7 +525,7 @@
             blit(g, smokeSprite(gv), p.x, p.y, r, (p.k === 'puff' ? 0.6 : p.k === 'contrail' ? 0.32 : 0.42) * (1 - k)); break;
           }
           case 'dust': blit(g, dustSprite(), p.x, p.y, (p.r || 4) * (1 + k * 1.5), 0.4 * (1 - k)); break;
-          case 'wake': { const r = (p.r || 4) * (1 + k * 2); g.strokeStyle = `rgba(230,245,255,${0.35 * (1 - k)})`; g.lineWidth = 1.2; g.beginPath(); g.arc(p.x, p.y, r, 0, 7); g.stroke(); break; }
+          case 'wake': blit(g, soft('foam', [[0, 'rgba(235,248,255,0.9)'], [0.6, 'rgba(225,242,255,0.35)'], [1, 'rgba(225,242,255,0)']]), p.x, p.y, (p.r || 4) * (0.6 + k * 1.6), 0.32 * (1 - k)); break;
           case 'fire': { g.globalCompositeOperation = 'lighter'; blit(g, flameSprite(), p.x, p.y, p.r * (1 - k * 0.5), 0.9 * (1 - k)); g.globalCompositeOperation = 'source-over'; break; }
           case 'fireball': { g.globalCompositeOperation = 'lighter'; blit(g, fireSprite(), p.x, p.y, p.r * (0.5 + k * 0.9), 1 - k); g.globalCompositeOperation = 'source-over'; break; }
           case 'flash': {
@@ -510,6 +534,8 @@
             if (p.cone && p.a != null) { const L = Math.min(r, 9); g.fillStyle = `rgba(255,205,120,${0.75 * (1 - k)})`; g.beginPath(); g.moveTo(p.x, p.y); g.lineTo(p.x + Math.cos(p.a - 0.3) * L * 1.2, p.y + Math.sin(p.a - 0.3) * L * 1.2); g.lineTo(p.x + Math.cos(p.a) * L * 1.8, p.y + Math.sin(p.a) * L * 1.8); g.lineTo(p.x + Math.cos(p.a + 0.3) * L * 1.2, p.y + Math.sin(p.a + 0.3) * L * 1.2); g.fill(); }
             g.globalCompositeOperation = 'source-over'; break;
           }
+          case 'light': { g.globalCompositeOperation = 'lighter'; blit(g, soft('lightpool', [[0, 'rgba(255,170,80,0.55)'], [0.5, 'rgba(255,120,40,0.18)'], [1, 'rgba(255,90,20,0)']]), p.x, p.y, p.r, 1 - k); g.globalCompositeOperation = 'source-over'; break; }
+          case 'ember': { g.fillStyle = `rgba(255,${180 - k * 120},60,${1 - k})`; g.fillRect(p.x - 0.8, p.y - 0.8, 1.6, 1.6); break; }
           case 'spark': { g.strokeStyle = `rgba(255,220,120,${1 - k})`; g.lineWidth = 1.2; g.beginPath(); g.moveTo(p.x, p.y); g.lineTo(p.x - p.vx * 0.03, p.y - p.vy * 0.03); g.stroke(); break; }
           case 'droplet': { g.fillStyle = `rgba(220,240,255,${0.8 * (1 - k)})`; g.fillRect(p.x, p.y, 1.6, 1.6); break; }
           case 'debris': { g.save(); g.translate(p.x, p.y); g.rotate(p.rot + k * 8); g.fillStyle = `rgba(40,36,32,${1 - k * 0.5})`; g.fillRect(-2.5, -1.5, 5, 3); g.restore(); break; }

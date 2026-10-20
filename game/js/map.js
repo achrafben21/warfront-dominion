@@ -309,7 +309,7 @@
       // roads and bridges
       p.line([[12, 84], [30, 66], [47, 48]], 2, T.ROAD, (t) => t !== T.WATER);
       p.line([[12, 84], [44, 88], [72, 72]], 2, T.ROAD, (t) => t !== T.WATER);
-      p.line([[26, 64], [33, 71]], 2.4, T.BRIDGE, (t) => t === T.WATER || t === T.ROAD);
+      p.line([[23, 73], [30.5, 65.5]], 2.2, T.BRIDGE, (t) => t === T.WATER || t === T.SHALLOW || t === T.ROAD);
       p.line([[31, 88], [38, 88]], 2.4, T.BRIDGE, (t) => t === T.WATER || t === T.ROAD);
       p.line([[8, 56], [8, 63]], 2.4, T.BRIDGE, (t) => t === T.WATER);
       mirrorPoint(m);

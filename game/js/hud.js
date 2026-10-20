@@ -11,6 +11,9 @@
       this.G = G; this.el = $('hud'); this.t = 0; this.sig = ''; this.tab = null; this.drawerOpen = false; this.toastList = [];
       this.spawnOwner = 1;
       // static buttons
+      $('btn-menu').innerHTML = WF.ICON.menu; $('btn-box').innerHTML = WF.ICON.box; $('btn-army').innerHTML = WF.ICON.army; $('btn-idle').innerHTML = WF.ICON.wrench;
+      $('r-credits').querySelector('i').outerHTML = '<i class="ri">' + WF.ICON.credits + '</i>'; $('r-metal').querySelector('i').outerHTML = '<i class="ri">' + WF.ICON.metal + '</i>';
+      $('r-power').querySelector('i').outerHTML = '<i class="ri">' + WF.ICON.power + '</i>'; $('r-units').querySelector('i').outerHTML = '<i class="ri">' + WF.ICON.units + '</i>';
       $('btn-menu').onclick = () => { G.audio.ui('click'); G.togglePause(true); };
       $('btn-pause').onclick = () => { G.audio.ui('click'); G.togglePause(); };
       $('btn-speed').onclick = () => { G.audio.ui('click'); G.cycleSpeed(); };
@@ -21,7 +24,7 @@
         b.sort((x, y) => x.orders.length - y.orders.length); this.idleIdx = ((this.idleIdx || 0) + 1) % b.length; const pick = b[0].orders.length ? b[this.idleIdx] : b[0];
         G.select([pick], false); G.renderer.cam.x = pick.x; G.renderer.cam.y = pick.y; G.renderer.clampCam();
       };
-      const bb = document.createElement('button'); bb.className = 'side-btn'; bb.id = 'btn-build'; bb.title = 'Build structures'; bb.textContent = '🏗'; bb.onclick = () => this.openBuild();
+      const bb = document.createElement('button'); bb.className = 'side-btn'; bb.id = 'btn-build'; bb.title = 'Build structures'; bb.innerHTML = WF.ICON.build; bb.onclick = () => this.openBuild();
       $('leftcol').insertBefore(bb, $('btn-army'));
       $('place-ok').onclick = () => G.confirmPlace();
       $('place-cancel').onclick = () => G.cancelPlace();
@@ -63,7 +66,7 @@
       if (sandbox) this.toast('Sandbox: open the 🏗 menu → SPAWN tab to drop any unit for any player.', 'good');
     }
     setBoxMode(on) { this.G.input.boxMode = on; $('btn-box').classList.toggle('on', on); if (on) this.toast('Box select: drag over units', 'info'); }
-    updatePause() { $('btn-pause').textContent = this.G.paused ? '▶' : '❚❚'; $('btn-speed').textContent = this.G.speed + '×'; $('btn-speed').classList.toggle('hidden', !!this.w && !!this.w.mission && false); }
+    updatePause() { $('btn-pause').innerHTML = this.G.paused ? WF.ICON.play : WF.ICON.pause; $('btn-speed').textContent = this.G.speed + '×'; $('btn-speed').classList.toggle('hidden', !!this.w && !!this.w.mission && false); }
 
     toast(text, kind, onClick) {
       const box = $('toasts'); const d = document.createElement('div'); d.className = 'toast ' + (kind || ''); d.textContent = text;
@@ -127,7 +130,8 @@
         if (e.kind === 'bld') { if (d.power) sub += `<br>Power ${d.power > 0 ? '+' : ''}${d.power}`; if (d.income) sub += ` · Income ${d.income.c ? '+' + d.income.c + ' cr/s' : ''}${d.income.m ? ' +' + d.income.m + ' mt/s' : ''}`; if (!e.built) sub += `<br>Under construction ${Math.round(e.progress * 100)}%`; }
         if (!own) sub = `<span style="color:${D.TEAM_COLORS[pl.color].main}">${esc(pl.name)} · ${esc(D.FACTIONS[pl.faction].name)}</span><br>` + sub;
         if (e.kills) sub += `<br>Kills: ${e.kills}`;
-        info.innerHTML = `<div class="nm">${esc(d.name)}</div><div class="hp"><b data-hp="${e.id}" style="width:${(e.hp / e.maxHp * 100).toFixed(0)}%"></b></div><div class="sub">${sub}</div>`;
+        const por = ART.iconURL(e.kind === 'unit' ? 'unit' : 'bld', e.type, pl.faction, pl.color);
+        info.innerHTML = `<div class="selrow"><img class="portrait" src="${por}" alt=""><div class="selmain"><div class="nm">${esc(d.name)}</div><div class="hp"><b data-hp="${e.id}" style="width:${(e.hp / e.maxHp * 100).toFixed(0)}%"></b></div><div class="hpn" data-hpn="${e.id}">${Math.ceil(e.hp)} / ${e.maxHp}</div></div></div><div class="sub">${sub}</div>`;
       } else {
         const cnt = {}; for (const e of sel) cnt[e.type] = (cnt[e.type] || 0) + 1;
         info.innerHTML = `<div class="nm">${sel.length} selected</div><div class="mix">` + Object.keys(cnt).map((t) => `<span>${cnt[t]}× ${esc(D.UNITS[t] ? D.unitFor(t, pl.faction).name.split(' ')[0] : D.BUILDINGS[t].name)}</span>`).join('') + '</div>';
@@ -135,7 +139,8 @@
       // commands
       let h = '';
       const units = sel.filter((e) => e.kind === 'unit' && e.owner === pid);
-      const B = (act, icon, label, cls) => `<button class="cmd ${cls || ''}" data-act="${act}">${icon}<small>${label}</small></button>`;
+      const IC = { stop: 'stop', hold: 'hold', amove: 'amove', patrol: 'patrol', retreat: 'retreat', formation: 'formation', regroup: 'regroup', queue: 'queue', build: 'build', unload: 'unload', group: 'group', produce: 'produce', rally: 'rally', research: 'research', strike: 'strike', fix: 'wrench', cancelb: 'cancel', sell: 'demolish' };
+      const B = (act, icon, label, cls) => `<button class="cmd ${cls || ''}" data-act="${act}"><i class="ico">${WF.ICON[IC[act]] || icon}</i><small>${label}</small></button>`;
       if (units.length) {
         h += B('stop', '■', 'Stop') + B('hold', '⛉', 'Hold') + B('amove', '⚔', 'Atk-Move') + B('patrol', '↻', 'Patrol') + B('retreat', '⟲', 'Retreat');
         if (units.length > 1) h += B('formation', '⋮⋮', this.G.formation) + B('regroup', '◎', 'Regroup');
@@ -232,6 +237,7 @@
       const w = this.w;
       for (const b of document.querySelectorAll('[data-qprog]')) { const e = w.get(+b.dataset.qprog); if (e) b.style.width = (e.qprog * 100).toFixed(0) + '%'; }
       for (const b of document.querySelectorAll('[data-rprog]')) { const e = w.get(+b.dataset.rprog); if (e) b.textContent = Math.round(e.rprog * 100) + '%'; }
+      for (const b of document.querySelectorAll('[data-hpn]')) { const e = w.get(+b.dataset.hpn); if (e) b.textContent = Math.ceil(e.hp) + ' / ' + e.maxHp; }
       for (const b of document.querySelectorAll('[data-hp]')) { const e = w.get(+b.dataset.hp); if (e) { const f = e.hp / e.maxHp; b.style.width = (f * 100).toFixed(0) + '%'; b.style.background = f > 0.6 ? 'var(--good)' : f > 0.3 ? 'var(--acc)' : 'var(--bad)'; } }
       const strike = document.querySelector('[data-act="strike"] small'); if (strike) { const s = this.G.selected()[0]; if (s && s.type === 'silo') strike.textContent = s.charge >= 1 ? 'Launch' : Math.floor(s.charge * 100) + '%'; }
     }
@@ -330,7 +336,7 @@
         // highlight valid deposits
         if (d.on) for (const dep of w.map.deposits) { if (dep.kind !== d.on || w.map.occ[w.map.idx(dep.tx, dep.ty)]) continue; g.strokeStyle = 'rgba(120,255,140,0.5)'; g.lineWidth = 1.5 / z; g.strokeRect(dep.tx * TILE, dep.ty * TILE, 64, 64); }
         const s = ART.bld(pl.type, p.faction, p.color);
-        g.globalAlpha = 0.6; g.drawImage(s.img, pl.tx * TILE, pl.ty * TILE, d.w * TILE, d.h * TILE); g.globalAlpha = 1;
+        g.globalAlpha = 0.65; g.drawImage(s.img, pl.tx * TILE - s.pad, pl.ty * TILE - s.pad, s.w, s.h); g.globalAlpha = 1;
         g.fillStyle = pl.valid ? 'rgba(80,255,120,0.22)' : 'rgba(255,60,50,0.3)'; g.fillRect(pl.tx * TILE, pl.ty * TILE, d.w * TILE, d.h * TILE);
         g.strokeStyle = pl.valid ? 'rgba(80,255,120,0.9)' : 'rgba(255,60,50,0.9)'; g.lineWidth = 2 / z; g.strokeRect(pl.tx * TILE, pl.ty * TILE, d.w * TILE, d.h * TILE);
         const bd = D.bldFor(pl.type, p.faction);

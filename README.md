@@ -6,6 +6,17 @@ Build bases, run a three-resource economy, research technology and command large
 - **Install:** copy `dist/WarfrontDominion.apk` to an Android 7.0+ device and open it (allow "install unknown apps" for your file manager or browser when asked).
 - **Play in a browser (desktop or phone):** open `game/index.html`. Mouse/keyboard and touch are both supported.
 
+- **Player manual (Arabic, 26 pages):** `dist/WarfrontDominion_Manual_AR.pdf`, generated from the live game data by `tools/manual/manual.html` (unit/building/research stats are always in sync with `data.js`).
+
+## Version 2.0 — what changed
+
+- **New art engine** (`art.js`, `art_units.js`, `art_bld.js`, `art_terrain.js`): supersampled sprites with directional lighting, bevels, panel lines and soft blurred shadows; per-faction camouflage (woodland / digital / rust); animated tank tracks; turrets with cast shadows and rings; extruded pseudo-3D buildings with concrete pads, emblems, blinking lights and smoke stacks.
+- **Natural terrain:** tileable material textures blended through smoothed, domain-warped masks; soft shorelines with foam and wave crests; relief shading for plateaus; real oriented bridges; dense tree, conifer, boulder and bush props.
+- **Effects:** ground light from explosions, embers, shockwaves, foam wakes behind ships, screen vignette.
+- **UI:** hand-drawn SVG icon set (`icons.js`), faction emblems, rendered unit/building portraits in the selection panel and build menus, tactical panels with gold corner brackets, bundled Rajdhani and Black Ops One fonts (SIL OFL).
+- Twin Rivers bridge moved for a cleaner river crossing (connectivity re-validated).
+- Re-tested: 44/44 simulation tests, 28/28 browser E2E checks, 15 full AI-vs-AI matches; APK v2.0.0 (versionCode 2) verified with androguard and aapt2.
+
 ---
 
 ## What is in the game
