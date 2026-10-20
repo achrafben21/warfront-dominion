@@ -1,0 +1,27 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{margin:0;background:transparent}</style></head><body>
+<canvas id="c" width="512" height="512"></canvas>
+<script src="../js/util.js"></script><script src="../js/data.js"></script><script src="../js/art.js"></script>
+<script>
+WF.ART.forceDOM = true; WF.ART.SS = 16;
+const c=document.getElementById('c'), g=c.getContext('2d');
+// rounded square background
+function rr(x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();}
+rr(8,8,496,496,96); const bg=g.createRadialGradient(220,180,40,256,256,360); bg.addColorStop(0,'#3d4c2c'); bg.addColorStop(0.6,'#1b2417'); bg.addColorStop(1,'#0a0e09'); g.fillStyle=bg; g.fill();
+g.save(); g.clip();
+// terrain hint: diagonal dirt road
+g.strokeStyle='rgba(120,100,70,0.35)'; g.lineWidth=90; g.beginPath(); g.moveTo(-40,560); g.lineTo(560,-40); g.stroke();
+// gold shield chevrons
+g.strokeStyle='#e8b84a'; g.lineWidth=22; g.lineJoin='round';
+g.beginPath(); g.moveTo(96,120); g.lineTo(256,72); g.lineTo(416,120); g.lineTo(416,250); g.quadraticCurveTo(410,380,256,456); g.quadraticCurveTo(102,380,96,250); g.closePath(); g.stroke();
+g.globalAlpha=0.18; g.fillStyle='#e8b84a'; g.fill(); g.globalAlpha=1;
+// tank
+const D=WF.D, ART=WF.ART; const R=D.UNITS.heavy_tank.radius;
+const body=ART.unitBody('heavy_tank','aegis',0,R), tur=ART.unitTurret('heavy_tank','aegis',0,R);
+g.save(); g.translate(256,285); g.rotate(-Math.PI/2); g.scale(7.0,7.0);
+g.shadowColor='rgba(0,0,0,0.6)'; g.shadowBlur=4; g.shadowOffsetX=1.5; g.shadowOffsetY=1.5;
+g.drawImage(body.img,-body.w/2,-body.h/2,body.w,body.h); g.shadowColor='transparent'; g.drawImage(tur.img,-tur.w/2,-tur.h/2,tur.w,tur.h); g.restore();
+// muzzle flash
+const fl=g.createRadialGradient(256,78,0,256,78,70); fl.addColorStop(0,'rgba(255,250,210,1)'); fl.addColorStop(0.35,'rgba(255,180,60,0.85)'); fl.addColorStop(1,'rgba(255,90,0,0)'); g.fillStyle=fl; g.beginPath(); g.arc(256,78,70,0,7); g.fill();
+g.restore();
+rr(8,8,496,496,96); g.strokeStyle='rgba(232,184,74,0.55)'; g.lineWidth=6; g.stroke();
+</script></body></html>

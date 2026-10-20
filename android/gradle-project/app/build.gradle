@@ -1,0 +1,22 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'com.warfront.dominion'
+    compileSdk 34
+    defaultConfig {
+        applicationId 'com.warfront.dominion'
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName '1.0.0'
+    }
+    // The game itself lives in ../../../game (shared with the browser build and the tests).
+    sourceSets { main { assets.srcDirs = ["$buildDir/gameAssets"] } }
+    buildTypes { release { minifyEnabled false } }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_1_8; targetCompatibility JavaVersion.VERSION_1_8 }
+}
+// Copy the HTML5 game into the asset folder before building (excludes tests).
+tasks.register('syncGameAssets', Sync) {
+    from('../../../game') { exclude 'tests/**' }
+    into "$buildDir/gameAssets/game"
+}
+preBuild.dependsOn syncGameAssets

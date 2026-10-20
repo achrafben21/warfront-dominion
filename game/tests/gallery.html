@@ -1,0 +1,22 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{background:#2c3a2a;margin:0;color:#ddd;font:11px sans-serif}canvas{display:block}</style></head><body>
+<canvas id="c" width="1700" height="1100"></canvas>
+<script src="../js/util.js"></script><script src="../js/data.js"></script><script src="../js/art.js"></script>
+<script>
+const g=document.getElementById('c').getContext('2d'); const D=WF.D, ART=WF.ART;
+g.fillStyle='#4e6838'; g.fillRect(0,0,1700,1100);
+let y=10; const S=2.2;
+for (const [fi,f] of Object.keys(D.FACTIONS).entries()) {
+  let x=10; g.fillStyle='#fff'; g.fillText(D.FACTIONS[f].name,x,y+10); y+=16;
+  for (const t of D.FACTIONS[f].units) {
+    const d=D.UNITS[t]; const body=ART.unitBody(t,f,fi,d.radius); const tur=ART.unitTurret(t,f,fi,d.radius);
+    g.save(); g.translate(x+40,y+40); g.scale(S,S); g.rotate(-0.5);
+    g.drawImage(body.img,-body.w/2,-body.h/2,body.w,body.h); if(tur) g.drawImage(tur.img,-tur.w/2,-tur.h/2,tur.w,tur.h); g.restore();
+    g.fillStyle='#fff'; g.fillText(t,x+4,y+92); x+=84; if(x>1600){x=10;y+=100;}
+  }
+  y+=100;
+}
+let x=10;
+for (const t of Object.keys(D.BUILDINGS)) { const b=ART.bld(t,'aegis',0); g.drawImage(b.img,x,y,b.w*1.3,b.h*1.3); const tu=ART.bldTurret(t,'aegis',0,Math.min(b.w,b.h)*0.4); if(tu){g.save();g.translate(x+b.w*0.65,y+b.h*0.65);g.scale(1.3,1.3);g.drawImage(tu.img,-tu.w/2,-tu.h/2,tu.w,tu.h);g.restore();} g.fillStyle='#fff'; g.fillText(t,x,y+b.h*1.3+12); x+=b.w*1.3+14; if(x>1550){x=10;y+=150;} }
+y+=150; x=10;
+for (const [fi,f] of Object.keys(D.FACTIONS).entries()) for (const t of ['factory','power','turret_gun']) { const b=ART.bld(t,f,fi); g.drawImage(b.img,x,y,b.w*1.3,b.h*1.3); x+=b.w*1.3+14; }
+</script></body></html>
