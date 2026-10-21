@@ -294,3 +294,4 @@ html, body { font-family: 'Rajdhani', "Segoe UI", Roboto, Arial, sans-serif; fon
   .menu-main .tag { margin: 2px 0 10px; font-size: 0.85em; }
 }
 .v2badge { -webkit-text-fill-color: #1a1205; color: #1a1205; }
+.ver .author { color: var(--gold, #e8b84a); font-weight: 700; letter-spacing: 0.04em; }

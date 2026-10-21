@@ -84,7 +84,7 @@
     pageNo++; opt = opt || {};
     const d = document.createElement('section'); d.className = 'page' + (opt.cls ? ' ' + opt.cls : '');
     d.innerHTML = (opt.noHead ? '' : `<div class="pghead"><span>${title || ''}</span><span class="en">WARFRONT · DOMINION</span></div>`) + html +
-      (opt.noFoot ? '' : `<div class="foot"><span>دليل القائد — الإصدار 2.0</span><span class="en">${pageNo}</span></div>`);
+      (opt.noFoot ? '' : `<div class="foot"><span>دليل القائد — الإصدار 2.0 · Achraf Benhachem</span><span class="en">${pageNo}</span></div>`);
     if (opt.id) d.id = opt.id;
     doc.appendChild(d); return pageNo;
   }
@@ -106,6 +106,7 @@
     <div class="title">دليل القائد الشامل</div>
     <div class="sub">كل ما تحتاج معرفته لقيادة جيوشك إلى النصر: الواجهة، الاقتصاد، الوحدات، التكتيكات والحملة.</div>
     <div class="badge">VERSION 2.0</div>
+    <div class="author">لعبة من إبداع <b>Achraf Benhachem</b></div>
     <div class="emblems"><div>${WF.factionEmblem('aegis', 34)} ${E('Aegis Coalition')}</div><div>${WF.factionEmblem('vortex', 34)} ${E('Vortex Directorate')}</div><div>${WF.factionEmblem('iron', 34)} ${E('Iron Dominion')}</div></div>
   </div>`, { cls: 'cover', noHead: true, noFoot: true });
 

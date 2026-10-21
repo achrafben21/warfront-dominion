@@ -1,23 +1,43 @@
-# WARFRONT: DOMINION
+<p align="center"><img src="docs/screenshots/menu.jpg" width="820" alt="Warfront: Dominion main menu"></p>
 
-An original real-time strategy war game for Android (landscape phones and tablets), playable fully offline against AI.
-Build bases, run a three-resource economy, research technology and command large combined-arms armies across land, sea and air.
+<h1 align="center">WARFRONT: DOMINION</h1>
+<p align="center"><b>An open-source real-time strategy war game for Android and the web</b><br>
+Created by <b>Achraf Benhachem</b></p>
 
-- **Install:** copy `dist/WarfrontDominion.apk` to an Android 7.0+ device and open it (allow "install unknown apps" for your file manager or browser when asked).
-- **Play in a browser (desktop or phone):** open `game/index.html`. Mouse/keyboard and touch are both supported.
+<p align="center">
+<a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-e8b84a"></a>
+<img alt="Version 2.0.0" src="https://img.shields.io/badge/version-2.0.0-5fdc7a">
+<img alt="Android 7.0+" src="https://img.shields.io/badge/Android-7.0%2B-3ddc84">
+<img alt="Offline" src="https://img.shields.io/badge/play-fully%20offline-6fb6ff">
+</p>
 
-- **Player manual (Arabic, 26 pages):** `dist/WarfrontDominion_Manual_AR.pdf`, generated from the live game data by `tools/manual/manual.html` (unit/building/research stats are always in sync with `data.js`).
+Build bases, run a three-resource economy, research technology and command large combined-arms armies — infantry, tanks, artillery, aircraft and warships — against an AI that scouts, adapts and plays by the same rules as you. Designed for landscape phones and tablets, fully offline, with no ads, accounts or tracking.
 
-## Version 2.0 — what changed
+## Download
 
-- **New art engine** (`art.js`, `art_units.js`, `art_bld.js`, `art_terrain.js`): supersampled sprites with directional lighting, bevels, panel lines and soft blurred shadows; per-faction camouflage (woodland / digital / rust); animated tank tracks; turrets with cast shadows and rings; extruded pseudo-3D buildings with concrete pads, emblems, blinking lights and smoke stacks.
-- **Natural terrain:** tileable material textures blended through smoothed, domain-warped masks; soft shorelines with foam and wave crests; relief shading for plateaus; real oriented bridges; dense tree, conifer, boulder and bush props.
-- **Effects:** ground light from explosions, embers, shockwaves, foam wakes behind ships, screen vignette.
-- **UI:** hand-drawn SVG icon set (`icons.js`), faction emblems, rendered unit/building portraits in the selection panel and build menus, tactical panels with gold corner brackets, bundled Rajdhani and Black Ops One fonts (SIL OFL).
-- Twin Rivers bridge moved for a cleaner river crossing (connectivity re-validated).
-- Re-tested: 44/44 simulation tests, 28/28 browser E2E checks, 15 full AI-vs-AI matches; APK v2.0.0 (versionCode 2) verified with androguard and aapt2.
+| File | Description |
+|---|---|
+| [`dist/WarfrontDominion.apk`](dist/WarfrontDominion.apk) | Android app (v2.0.0, Android 7.0+) |
+| [`dist/WarfrontDominion_Manual_EN.pdf`](dist/WarfrontDominion_Manual_EN.pdf) | Commander's Manual — English, 27 pages |
+| [`dist/WarfrontDominion_Manual_AR.pdf`](dist/WarfrontDominion_Manual_AR.pdf) | دليل القائد — Arabic, 26 pages |
 
----
+- **Install on Android:** copy the APK to an Android 7.0+ device and open it (allow "install unknown apps" for your file manager or browser when asked).
+- **Play in a browser:** open `game/index.html` (desktop or phone). Mouse/keyboard and touch are both supported. No build step or server is needed.
+
+## Screenshots
+
+| | |
+|---|---|
+| ![Tank battle](docs/screenshots/battle.jpg) | ![Naval and air battle](docs/screenshots/naval.jpg) |
+| ![Rivers, bridges and forests](docs/screenshots/terrain.jpg) | ![Build menu](docs/screenshots/build.jpg) |
+
+## Version 2.0 highlights
+
+- **New art engine** (`art.js`, `art_units.js`, `art_bld.js`, `art_terrain.js`): supersampled sprites with directional lighting, bevels, panel lines and soft shadows; per-faction camouflage (woodland / digital / rust); animated tank tracks; turrets with cast shadows; extruded pseudo-3D buildings with concrete pads, emblems, blinking lights and smoke stacks.
+- **Natural terrain:** tileable material textures blended through smoothed masks; soft shorelines with foam and wave crests; plateau relief shading; real oriented bridges; dense trees, boulders and bushes.
+- **Effects:** explosions that light the ground, embers, shockwaves, ship wakes, screen vignette.
+- **Interface:** hand-drawn SVG icon set, faction emblems, unit and building portraits, tactical panels, bundled open-licensed fonts.
+- **Player manuals** in English and Arabic, generated from the live game data so every stat matches the game.
 
 ## What is in the game
 
@@ -56,7 +76,12 @@ game/                 The complete game (HTML5 canvas + JavaScript, no dependenc
   js/sim_units.js     orders, formations, steering, combat, projectiles
   js/ai.js            AI commander
   js/campaign.js      campaign missions
-  js/art.js           procedural sprites, icons and terrain
+  js/art.js           art core: palette, lighting helpers, sprite cache, shadows
+  js/art_units.js     unit sprites (28 types x 3 factions)
+  js/art_bld.js       building sprites
+  js/art_terrain.js   terrain textures, masks, props, minimap
+  js/icons.js         SVG interface icons, faction emblems, portraits
+  fonts/              Rajdhani, Black Ops One (SIL OFL 1.1)
   js/render.js        renderer, effects, fog overlay, minimap
   js/audio.js         procedural audio and music
   js/input.js hud.js menus.js storage.js main.js   interface and app shell
@@ -68,7 +93,9 @@ android/
 tools/
   build_apk.py        self-contained APK builder (manifest/resources encoder, dex, zip-align, v2 signing)
   verify_apk.py       independent APK verification
-dist/WarfrontDominion.apk
+  manual/             manual generators (manual_en.html, manual.html) rendered to PDF with headless Chromium
+docs/screenshots/     README images
+dist/                 APK and PDF manuals
 ```
 
 The simulation (`util`, `data`, `map`, `sim_*`, `ai`, `campaign`) has no DOM access and runs identically in Node. All player and AI actions go through `world.command(playerId, cmd)`, a validated command stream with a fixed 20 Hz deterministic tick — the boundary a future lockstep multiplayer layer would use. Multiplayer itself is **not** implemented.
@@ -83,7 +110,7 @@ The build machine used for this release had no Android SDK, so `tools/build_apk.
 ANDROID_JAR=/path/to/android.jar DX_JAR=/path/to/dx.jar python3 tools/build_apk.py
 ```
 
-It produces `dist/WarfrontDominion.apk` (minSdk 24 / targetSdk 33, signed with APK Signature Scheme v2). The signing key is created on first build in `android/keys/` — **keep it**: Android only installs updates signed with the same key.
+It produces `dist/WarfrontDominion.apk` (minSdk 24 / targetSdk 33, signed with APK Signature Scheme v2). If `android/keys/` is empty a new signing key is generated there. The official release key is **not** in this repository; an APK you build yourself is signed with your own key, so Android will ask you to uninstall the official build before installing it.
 
 **Alternative (standard toolchain):** `android/gradle-project` is a normal Android Studio project with the same manifest and activity. Open it in Android Studio (or run `gradle assembleRelease` with an SDK installed); a Gradle task copies `game/` into the APK assets automatically. This project was *not* built here (no SDK available), so treat it as a convenience starting point.
 
@@ -98,3 +125,17 @@ aapt2 dump badging dist/WarfrontDominion.apk            # Android's own parser
 ```
 
 See `TESTING.md` for what was verified in this release and the known limitations.
+
+## Player manual
+
+The PDFs in `dist/` are generated from `tools/manual/`. Open `manual_en.html` (or the Arabic `manual.html`) in Chromium and print to PDF (A4, background graphics on), or render it headlessly with Playwright's `page.pdf()`. Unit, building and research tables are read straight from `game/js/data.js`.
+
+## Contributing
+
+Issues and pull requests are welcome. Please run `node game/tests/sim.test.js` and `python3 game/tests/e2e.py` before submitting; all balance values live in `game/js/data.js`.
+
+## Credits and license
+
+**Created by Achraf Benhachem.**
+
+The source code is released under the [MIT License](LICENSE). All graphics, icons, effects, music and sound are generated procedurally by the game's own code — no third-party art or audio is used. The bundled fonts (Rajdhani, Black Ops One, Tajawal) are under the SIL Open Font License 1.1; see the `OFL-*.txt` files next to them.

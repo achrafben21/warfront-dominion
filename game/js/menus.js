@@ -51,7 +51,7 @@
         ${MB('load', 'load', 'Load Game', '')}
         ${MB('settings', 'settings', 'Settings', '')}
         ${MB('help', 'book', 'Field Manual', '')}</div>
-        <div class="ver">v${this.G.VERSION} · ${Store.native ? 'Android' : 'Web'} build</div>`);
+        <div class="ver">v${this.G.VERSION} · ${Store.native ? 'Android' : 'Web'} build · Created by <b class="author">Achraf Benhachem</b></div>`);
       this.click(el, (a) => {
         if (a === 'continue') this.tryLoad('auto');
         else if (a === 'campaign') this.campaign();

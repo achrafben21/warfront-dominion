@@ -1,4 +1,6 @@
-# Test report — WARFRONT: DOMINION v1.0.0
+# Test report — WARFRONT: DOMINION v2.0.0
+
+v2.0.0 re-run (after the art, terrain and UI rewrite): sim tests 44/44, E2E 28/28, 15 AI-vs-AI matches on all maps without errors (13 decisive, 2 hit the 45-min cap), APK v2.0.0 verified with androguard and aapt2. The v1 details below still apply.
 
 All results below were actually executed for this release.
 
@@ -24,7 +26,7 @@ Performance (headless Chromium, software rendering, 1688×780 px): simulation �
 
 - Multiplayer is not implemented (architecture is command-stream based to allow it later).
 - Transports carry infantry only; air transports are not included.
-- Visuals are procedural 2D vector art, not hand-painted sprites.
+- Visuals are procedurally generated 2D art (lit and shaded since v2), not hand-painted sprites.
 - AI does not use amphibious transports and only lightly uses naval units on mixed maps.
 - Maps are handcrafted (5); there is no procedural map generator or map editor.
 - Requires Android 7.0+ with an up-to-date Android System WebView (standard on Play-enabled devices).
